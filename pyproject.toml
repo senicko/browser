@@ -1,0 +1,19 @@
+[project]
+name = "browser"
+version = "0.1.0"
+description = "Package for building browser models"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "client",
+    "model",
+    "schema",
+]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+client = { workspace = true }
+model = { workspace = true }
+schema = { workspace = true }

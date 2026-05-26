@@ -1,0 +1,25 @@
+[project]
+name = "model"
+version = "0.1.0"
+description = "App responsible for building the browser model."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=7.2.0",
+    "joblib>=1.5.3",
+    "langchain-text-splitters>=1.1.2",
+    "nltk>=3.9.4",
+    "pandas>=3.0.3",
+    "pydantic>=2.13.4",
+    "requests>=2.34.1",
+    "schema",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
+    "scipy-stubs>=1.17.1.4",
+]
+
+[tool.uv.sources]
+schema = { workspace = true }
+
+[project.scripts]
+build-model = "model.main:main"

@@ -1,0 +1,14 @@
+[project]
+name = "schema"
+version = "0.1.0"
+description = "Schema for the browser."
+readme = "README.md"
+authors = [
+    { name = "senicko", email = "25861704+senicko@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.10.10,<0.11.0"]
+build-backend = "uv_build"
