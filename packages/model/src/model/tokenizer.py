@@ -1,8 +1,10 @@
 import re
 from typing import Callable
+
+from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+
 
 class StemTokenizer:
     def __init__(

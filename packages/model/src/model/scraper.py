@@ -7,14 +7,14 @@ import re
 import time
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from .tokenizer import StemTokenizer
 
 import joblib
 import requests
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from schema import Document
 
 from .paths import ARTIFACTS_DIR, MODEL_PACKAGE_ROOT
+from .tokenizer import StemTokenizer
 
 API_BASE_URL = "https://en.wikipedia.org/w/api.php"
 
@@ -171,7 +171,7 @@ def load_titles(titles_csv_file: str | Path) -> list[str]:
     return titles
 
 
-def build_corpus( 
+def build_corpus(
     logger: logging.Logger,
     titles_csv: str | Path = "culture_petscan.csv",
     corpus_save_to: str | Path = ARTIFACTS_DIR / "corpus.pkl",
@@ -179,7 +179,7 @@ def build_corpus(
     min_chunk_tokens: int = MIN_CHUNK_TOKENS,
 ) -> list[Document]:
     """
-    Builds a new corpus from cached articles. Allows to download articles 
+    Builds a new corpus from cached articles. Allows to download articles
     in case they aren't available locally.
     """
 
@@ -187,8 +187,10 @@ def build_corpus(
         with open(raw_articles_cache, "r", encoding="utf-8") as f:
             raw_articles = json.load(f)
     else:
-        input("You don't have any cached wikipedia articles. Do you want to start downloading the corpus?")
-        titles = load_titles(MODEL_PACKAGE_ROOT / titles_csv) 
+        input(
+            "You don't have any cached wikipedia articles. Do you want to start downloading the corpus?"
+        )
+        titles = load_titles(MODEL_PACKAGE_ROOT / titles_csv)
         raw_articles = fetch_wikipedia_articles(
             titles=titles,
             response_cache_file=raw_articles_cache,
@@ -200,7 +202,7 @@ def build_corpus(
         chunk_size=300,
         chunk_overlap=100,
         length_function=tokenizer.token_count,
-        is_separator_regex=False
+        is_separator_regex=False,
     )
 
     documents: list[Document] = []
@@ -222,12 +224,7 @@ def build_corpus(
                 dropped_chunks += 1
                 continue
 
-            documents.append(
-                Document(
-                    title=title,
-                    text=chunk
-                )
-            )
+            documents.append(Document(title=title, text=chunk))
 
         if i % 100 == 0:
             logger.debug(f"processed {i} articles")

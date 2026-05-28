@@ -13,7 +13,7 @@ from sklearn.preprocessing import Normalizer
 from model.bm25 import BM25Vectorizer
 
 from .paths import ARTIFACTS_DIR
-from .scraper import load_corpus, build_corpus
+from .scraper import build_corpus, load_corpus
 from .tokenizer import StemTokenizer
 
 
