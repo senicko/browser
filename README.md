@@ -309,7 +309,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     A["CountVectorizer.transform<br/>bm25_vectorizer, phrase<br/>warstwa liczenia, bez BM25Transformer"]
-    B{"phrase_vec.nnz == 0?"}
+    B{"phrase_vec.nnz == 0? (number of nonzeros)"}
     C["pusta lista"]
     D["phrase_vec.data.fill(1)<br/>zapytanie binarne"]
     E["scores = bm25_matrix @ phrase_vec.T"]
