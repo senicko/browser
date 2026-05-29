@@ -1,10 +1,6 @@
 # Architektura i uruchomienie
 
-Repozytorium to **monorepo [uv](https://docs.astral.sh/uv/)** (`[tool.uv.workspace]`, podmoduły: `packages/`*). Moduł (`browser`) instaluje wszystkie pakiety workspace; zależności między nimi:
-
-- **schema** — wspólny typ `Document`
-- **model** — zależy od `schema`; budowa korpusu, indeksy, `BoWModel` / `LSAModel` / `BM25Model`
-- **client** — zależy od `model`; UI Gradio
+Repozytorium to **monorepo [uv](https://docs.astral.sh/uv/)**.
 
 ## Struktura katalogów
 
@@ -17,7 +13,7 @@ browser/
     ├── schema/
     │   ├── pyproject.toml
     │   └── src/schema/
-    │       ├── __init__.py     # Document
+    │       ├── __init__.py     # klasa Document
     │       └── py.typed
     │
     ├── model/
@@ -50,7 +46,7 @@ W katalogu głównym repozytorium (wymagany [uv](https://docs.astral.sh/uv/getti
 uv sync
 ```
 
-**Trening indeksów** (wymaga korpusu; przy braku `corpus.pkl` `main.py` uruchomi `build_corpus`):
+**Przygotowanie modeli** (wymaga korpusu; przy braku `corpus.pkl` `main.py` uruchomi `build_corpus`):
 
 ```bash
 uv run build-model
@@ -126,8 +122,6 @@ Ten sam tokenizer jest używany przy budowie indeksów i przy zapytaniach użytk
 
 Moduł `packages/model` buduje artefakty wyszukiwania (`artifacts/*.pkl`) i udostępnia trzy klasy zapytań w `models.py`: `BoWModel`, `LSAModel`, `BM25Model`. Wspólny kontrakt to `Model.query(phrase, top_n=10) -> list[ModelResponse]`, gdzie `ModelResponse` zawiera `title`, `url`, `score`, `text`.
 
-Artefakty ładowane są leniwie (`functools.lru_cache`) przy pierwszym zapytaniu.
-
 ## Budowa indeksów
 
 Skrypt `python -m model.main`:
@@ -149,6 +143,8 @@ Po załadowaniu modeli z `artifacts/` (np. `len(vectorizer.vocabulary_)`):
 | Wymiar macierzy `lsa_bow.pkl` | 161,667 × 200     |
 
 
+Rozmiar słownika jest dosyć duży, ale ponieważ dataset to artykuły z angielskiej wikipedii (nie simplified-english), a wyszukiwanie działa w porządku, uznałem, że jest ok. W praktyce można zmniejszać słownik dostosowując parametry `min_df` i `max_df`. 
+
 BoW (`TfidfVectorizer`) i BM25 (`BM25Vectorizer`) mają ten sam rozmiar słownika — oba używają `StemTokenizer` oraz `min_df=5`, `max_df=0.8` na tym samym korpusie. LSA redukuje reprezentację do 200 składowych.
 
 
@@ -157,7 +153,7 @@ BoW (`TfidfVectorizer`) i BM25 (`BM25Vectorizer`) mają ten sam rozmiar słownik
 | `bow.pkl`             | Macierz rzadka TF-IDF dokumentów (`m × n`)  |
 | `vectorizer.pkl`      | `TfidfVectorizer` dopasowany do korpusu     |
 | `lsa_bow.pkl`         | Macierz dokumentów w przestrzeni LSA        |
-| `lsa_vectorizer.pkl`  | Pipeline: TF-IDF → SVD → normalizacja       |
+| `lsa_vectorizer.pkl`  | Pipeline: TF-IDF > SVD > normalizacja       |
 | `bm25.pkl`            | Macierz rzadka wag BM25 dokumentów          |
 | `bm25_vectorizer.pkl` | `BM25Vectorizer` (słownik + parametry BM25) |
 
@@ -349,11 +345,9 @@ Dla każdego artykułu UI pokazuje:
 - podgląd tekstu pierwszego chunka (pierwsze 512 znaków),
 - accordion z listą wszystkich trafionych chunków danego artykułu (z osobnym `score` każdego fragmentu).
 
+| Model    | Format `score` w UI                                |
+| -------- | -------------------------------------------------- |
+| BoW, LSA | `score × 100` z jednym miejscem po przecinku + `%` |
+| BM25     | wartość z 4 miejscami po przecinku                 |
 
-| Model    | Format `score` w UI                                | Kolor wyniku                                                             |
-| -------- | -------------------------------------------------- | ------------------------------------------------------------------------ |
-| BoW, LSA | `score × 100` z jednym miejscem po przecinku + `%` | `get_color_for_score(score)` — odcień zieleni (HSL, `hue = score × 120`) |
-| BM25     | wartość z 4 miejscami po przecinku                 | bez kolorowania (`inherit`)                                              |
-
-
-Wyniki trzymane są w `gr.State`; renderowanie listy artykułów jest reaktywne (`@gr.render`). Zmiana wybranego modelu przeformatowuje ostatnie wyniki wyszukiwania (np. `%` vs surowa wartość BM25) bez ponownego wywołania `Model.query`.
+Wyniki trzymane są w `gr.State`; renderowanie listy artykułów jest reaktywne (`@gr.render`).
