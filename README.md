@@ -326,7 +326,7 @@ Wynik `score` to surowa suma wag BM25, nie podobieństwo cosinusowe (inna skala 
 
 # Client
 
-- Aplikacja Gradio w `packages/client/src/client/main.py`
+- Aplikacja Gradio
 - Wyszukiwanie w korpusie Wikipedia (chunki z `corpus.pkl`)
 - Wybór **jednego** modelu na zapytanie — `Radio`: `bm25`, `lsa`, `bow`
 
