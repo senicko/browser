@@ -1,3 +1,5 @@
+<video src="demo.mov" controls width="100%"></video>
+
 # Architektura i uruchomienie
 
 Repozytorium to **monorepo [uv](https://docs.astral.sh/uv/)**.
@@ -46,13 +48,21 @@ W katalogu głównym repozytorium (wymagany [uv](https://docs.astral.sh/uv/getti
 uv sync
 ```
 
-**Przygotowanie modeli** (wymaga korpusu; przy braku `corpus.pkl` `main.py` uruchomi `build_corpus`):
+**Pobrane artefakty** 
+
+Trzeba skopiować do katalogu `packages/model/artifacts/` - m.in. `corpus.pkl`, `bow.pkl`, `vectorizer.pkl`, `lsa_bow.pkl`, `lsa_vectorizer.pkl`, `bm25.pkl`, `bm25_vectorizer.pkl`. Wtedy mona od razu uruchomić UI. Bez tych plików indeksy trzeba wygenerować lokalnie (`build-model`).
+
+**Przygotowanie modeli** 
+
+(wymaga korpusu; przy braku `corpus.pkl` `main.py` uruchomi `build_corpus`):
 
 ```bash
 uv run build-model
 ```
 
-**Aplikacja Gradio** (wymaga artefaktów w `packages/model/artifacts/`):
+**Aplikacja Gradio** 
+
+(wymaga artefaktów w `packages/model/artifacts/`):
 
 ```bash
 uv run run-client

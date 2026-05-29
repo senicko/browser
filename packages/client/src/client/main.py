@@ -55,8 +55,10 @@ def main():
                         placeholder="Search articles...",
                         show_label=False,
                         lines=1,
-                        container=False,
+                        max_lines=1,
                         scale=5,
+                        container=False,
+                        min_width=100,
                     )
 
                     submit_btn = gr.Button("Submit", variant="primary")
