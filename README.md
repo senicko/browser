@@ -1,4 +1,4 @@
-<video src="demo.mov" controls width="100%"></video>
+<video src="demo.mp4" poster="demo-poster.jpg" controls width="100%"></video>
 
 # Architektura i uruchomienie
 
