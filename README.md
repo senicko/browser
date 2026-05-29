@@ -2,17 +2,6 @@
 
 Repozytorium to **monorepo [uv](https://docs.astral.sh/uv/)** (`[tool.uv.workspace]`, podmoduły: `packages/`*). Moduł (`browser`) instaluje wszystkie pakiety workspace; zależności między nimi:
 
-```mermaid
-flowchart LR
-    schema["schema<br/>Document"]
-    model["model<br/>korpus, indeksy, zapytania"]
-    client["client<br/>Gradio UI"]
-
-    client --> schema --> model
-```
-
-
-
 - **schema** — wspólny typ `Document`
 - **model** — zależy od `schema`; budowa korpusu, indeksy, `BoWModel` / `LSAModel` / `BM25Model`
 - **client** — zależy od `model`; UI Gradio
@@ -111,8 +100,6 @@ flowchart LR
 ```
 
 
-
-
 | Etap               | Opis                                                                                                                                                                                                                                                                                   |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Źródło tytułów     | Plik CSV `culture_petscan.csv`                                                                                                                                                                                                                                                         |
@@ -134,8 +121,6 @@ Wszystkie modele wyszukiwania używają wspólnego `StemTokenizer`:
 - stemowanie: `PorterStemmer`.
 
 Ten sam tokenizer jest używany przy budowie indeksów i przy zapytaniach użytkownika, co zapewnia spójność słownika.
-
----
 
 # Model
 
@@ -177,8 +162,6 @@ BoW (`TfidfVectorizer`) i BM25 (`BM25Vectorizer`) mają ten sam rozmiar słownik
 | `bm25_vectorizer.pkl` | `BM25Vectorizer` (słownik + parametry BM25) |
 
 
----
-
 ## Bag of Words (BoW) — TF-IDF
 
 **Trenowanie:**
@@ -215,8 +198,6 @@ flowchart TD
 
 
 Wynik `score` to wartość podobieństwa cosinusowego z zakresu typowo `[0, 1]`.
-
----
 
 ## Latent Semantic Analysis (LSA)
 
@@ -260,8 +241,6 @@ flowchart TD
 
 
 Semantycznie: LSA grupuje współwystępowania terminów; wyszukiwanie odbywa się w przestrzeni „tematów” (składowych SVD), a nie surowych tokenów.
-
----
 
 ## BM25(+)
 
@@ -349,8 +328,6 @@ flowchart TD
 
 Wynik `score` to surowa suma wag BM25, nie podobieństwo cosinusowe (inna skala niż BoW/LSA).
 
----
-
 # Client
 
 - Aplikacja Gradio w `packages/client/src/client/main.py`
@@ -380,6 +357,3 @@ Dla każdego artykułu UI pokazuje:
 
 
 Wyniki trzymane są w `gr.State`; renderowanie listy artykułów jest reaktywne (`@gr.render`). Zmiana wybranego modelu przeformatowuje ostatnie wyniki wyszukiwania (np. `%` vs surowa wartość BM25) bez ponownego wywołania `Model.query`.
-
----
-
